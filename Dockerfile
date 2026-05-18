@@ -22,4 +22,4 @@ RUN mkdir -p storage/framework/sessions \
 
 # Expose port and start Laravel's built-in server
 EXPOSE 8000
-CMD ["sh", "-c", "php artisan config:clear && php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=${PORT:-8000}"]
+CMD ["sh", "-c", "php artisan config:clear && php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=$(printf '%d' ${PORT:-8000})"]
