@@ -21,5 +21,5 @@ RUN mkdir -p storage/framework/sessions \
     && chmod -R 777 storage bootstrap/cache
 
 # Expose port and start Laravel's built-in server
-EXPOSE 10000
-CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=10000"]
+EXPOSE 8000
+CMD ["sh", "-c", "php artisan config:clear && php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=${PORT:-8000}"]
