@@ -1,36 +1,28 @@
 FROM php:8.2-cli
 
-# Install system dependencies
 RUN apt-get update && apt-get install -y \
     git \
     unzip \
     curl \
     libzip-dev \
     zip \
-    libpq-dev \
-    && docker-php-ext-install zip pdo pdo_mysql pdo_pgsql pgsql
+    && docker-php-ext-install zip pdo pdo_mysql
 
-# Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Set working directory
 WORKDIR /app
 
-# Copy files
 COPY . .
 
-# Install dependencies
-RUN composer install --no-dev --no-interaction --optimize-autoloader
+RUN composer install --no-dev --optimize-autoloader --no-interaction
 
-# Create Laravel folders
 RUN mkdir -p storage/framework/sessions \
-    && mkdir -p storage/framework/views \
-    && mkdir -p storage/framework/cache \
-    && mkdir -p storage/logs \
+    storage/framework/views \
+    storage/framework/cache \
+    storage/logs \
+    bootstrap/cache \
     && chmod -R 777 storage bootstrap/cache
 
-# Railway port
 EXPOSE 8080
 
-# Start Laravel properly
-CMD ["sh", "-c", "php artisan config:clear && php artisan cache:clear && php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=${PORT:-8080}"]
+CMD php -S 0.0.0.0:${PORT:-8080} -t public
